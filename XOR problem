@@ -1,0 +1,65 @@
+import numpy as np
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
+    
+def sigmoid_deriv(x):
+    return sigmoid(x)*sigmoid(1-x)
+
+inputarr=np.array([[0,0],[0,1],[1,0],[1,1]])
+expopt=np.array([[0],[1],[1],[0]])
+
+epoch=10000
+lr=0.01
+
+#initialising weights 
+inner_x=2
+hidden_x=2
+outer_x=1
+
+w1=np.random.uniform(size=(inner_x,hidden_x))
+w2=np.random.uniform(size=(hidden_x,outer_x))
+b1=np.random.uniform(size=(1,hidden_x))
+b2=np.random.uniform(size=(1,outer_x))
+
+print("the intial hidden weights are: ",w1)
+print("the initial hidden bias are: ",b1)
+print("the initial outer weights are: ",w2)
+print("the intial outer biases are: ",b2)
+
+
+      
+for i in range(epoch):
+	#Forward Propagation
+	hla=np.dot(inputarr,w1)
+	hla=hla+b1
+	hlo=sigmoid(hla)
+
+	ola=np.dot(hlo,w2)
+	ola=ola+b2
+	obsopt=sigmoid(ola)
+
+	#Backpropagation
+	err=expopt-obsopt
+	obs_deriv=err*sigmoid_deriv(obsopt)
+    
+    errhl=obs_deriv.dot(w2.T)
+    hl_deriv=errhl*sigmoid_deriv(hlo)
+    
+    
+    
+    #Updating Weights and Biases
+    w1=w1+inputarr.T.dot(hl_deriv)*lr
+    b1+=np.sum(hl_deriv,axis=0,keepdims=True)*lr                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           w2=w2+hlo.T.dot(obs_deriv)*lr    b2=b2+np.sum(obs_deriv,keepdims=True)*lr
+    w2=w2+hlo.T.dot(obs_deriv)*lr
+    b2=b2+np.sum(obs_deriv,axis=0,keepdims=True)*lr
+    
+
+    
+ 	
+
+print("The final hidden weights are: ",w1)
+print("The final hidden bias are: ",b1)
+print("The final output weights are:",w2)
+print("Final output bias are:",b2)
+print("\n Output from neural network after 10,000 epochs: ",obsopt)
+
